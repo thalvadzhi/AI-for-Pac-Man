@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 #include "Graphics.h"
 #include "Controls.h"
 #include "Map.h"

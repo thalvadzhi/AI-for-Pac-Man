@@ -3,8 +3,8 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <SDL2\SDL_image.h>
-#include <SDL2\SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "Constants.h"
 
 extern std::map <int, std::weak_ptr<SDL_Texture>> loadedTextures;

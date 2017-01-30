@@ -1,5 +1,5 @@
-#include <SDL2\SDL.h>
-#include <SDL2\SDL_events.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
 #include <cstdlib>
 #include "Controls.h"
 #include "Graphics.h"

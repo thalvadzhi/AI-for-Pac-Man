@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 
 using std::string;
 typedef std::pair<int, int> pos;
@@ -11,7 +11,7 @@ const unsigned int WindowHeight = 640;
 const unsigned int FPS = 60;
 const unsigned int RandomSeed = 42;
 	  
-const unsigned int TileSize = 15;
+const          int TileSize = 15;
 const unsigned int PacmanMoveSpeed = 110;
 const unsigned int GhostMoveSpeed = 100;
 

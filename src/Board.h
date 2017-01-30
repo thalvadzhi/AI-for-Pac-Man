@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 #include "Graphics.h"
 #include "Map.h"
 #include "MobileObject.h"

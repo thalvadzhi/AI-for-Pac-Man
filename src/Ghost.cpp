@@ -2,13 +2,6 @@
 #include "Constants.h"
 #include "Controls.h"
 
-enum Mode {
-	Scatter,
-	Chase,
-	Frightened,
-	Eaten,
-};
-
 enum {
 	WalkEatenUp,
 	WalkEatenDown,

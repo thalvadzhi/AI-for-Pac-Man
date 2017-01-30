@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 #include "Graphics.h"
 #include "Constants.h"
 
@@ -30,6 +30,7 @@ public:
 	const unsigned char chase(const int&, const int&, const pos&, const unsigned char&, const int&, bool(*)(const char&)) const;
 
 	inline const char& getTileAt(const int&, const int&) const;
+	inline const char& getTileAt(const pos& position) const;
 	static void loadTextures();
 	int width, height;
 	bool isCleared;

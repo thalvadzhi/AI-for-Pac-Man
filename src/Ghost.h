@@ -3,7 +3,12 @@
 #include "Map.h"
 #include "MobileObject.h"
 
-enum Mode;
+enum Mode {
+	Scatter,
+	Chase,
+	Frightened,
+	Eaten,
+};
 
 class Ghost : public MobileObject 
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL2\SDL.h>
+#include <SDL2/SDL.h>
 #include "Graphics.h"
 #include "Map.h"
 
@@ -25,12 +25,12 @@ public:
 	int lastMoveTicks;
 	unsigned char movementInfo;
 
-	inline unsigned char MobileObject::getDirection() const
+	inline unsigned char getDirection() const
 	{
 		return (movementInfo & DirectionMask);
 	}
 
-	inline unsigned char MobileObject::getTurnDirection() const
+	inline unsigned char getTurnDirection() const
 	{
 		return ((movementInfo & TurnMask) >> 2);
 	}
@@ -38,12 +38,12 @@ protected:
 	Animation* currentAnimation;
 	int frameDistance(const int&) const;
 
-	inline void MobileObject::setDirection(const unsigned char& direction)
+	inline void setDirection(const unsigned char& direction)
 	{
 		movementInfo = ((movementInfo & TurnMask) | direction);
 	}
 
-	inline void MobileObject::setTurnDirection(const unsigned char& direction)
+	inline void setTurnDirection(const unsigned char& direction)
 	{
 		movementInfo = ((movementInfo & DirectionMask) | (direction << 2));
 	}
