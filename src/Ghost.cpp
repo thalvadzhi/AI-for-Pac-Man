@@ -27,6 +27,12 @@ Animation Clyde::animations[AnimationsCount2];
 Animation Blinky::animations[AnimationsCount2];
 int Ghost::scatterTimer = 0;
 
+const char* Ghost::Name  = "Unknown";
+const char* Pinky::Name  = "Pinky";
+const char* Inky::Name   = "Inky";
+const char* Clyde::Name  = "Clyde";
+const char* Blinky::Name = "Blinky";
+
 Ghost::Ghost(const int& posX, const int& posY) : MobileObject(posX, posY), lastTurnTile(0, 0)
 {
 	mode = Scatter;

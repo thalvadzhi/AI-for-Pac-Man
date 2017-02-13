@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include "Board.h"
 #include "Constants.h"
 #include "Controls.h"
@@ -76,6 +77,21 @@ void Board::drawScore(SDL_Renderer* renderer)
 {
 	score.setText("Score: " + std::to_string(player.score));
 	score.draw(renderer);
+}
+
+std::string Board::getState(const int& version) const
+{
+	std::ostringstream stringStream;
+	stringStream << "{ ";
+	stringStream << "version: " << version << ", ";
+	stringStream << "player_pos: [" << player.posX << ", " << player.posX << "], ";
+	stringStream << "{ ghost_name: \"" << blinky.Name << "\", position: [" << blinky.posX << ", " << blinky.posX << "] }, ";
+	stringStream << "{ ghost_name: \"" << inky.Name   << "\", position: [" << inky.posX   << ", " << inky.posX   << "] }, ";
+	stringStream << "{ ghost_name: \"" << pinky.Name  << "\", position: [" << pinky.posX  << ", " << pinky.posX  << "] }, ";
+	stringStream << "{ ghost_name: \"" << clyde.Name  << "\", position: [" << clyde.posX  << ", " << clyde.posX  << "] }, ";
+	stringStream << map.getState(version).c_str();
+	stringStream << " }";
+	return stringStream.str();
 }
 
 void Board::lostLive()

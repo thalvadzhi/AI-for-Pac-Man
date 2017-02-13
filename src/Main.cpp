@@ -11,13 +11,15 @@ int main(int argc, char* argv[])
 
 	Fps fps(FPS);
 
+    useAIControls(); // TODO: Export to a menu
 	board.initTimers();
 	while (isRunning)
 	{
 		handleInput();
 		board.update();
+		updateAI(); // TODO: create a separate system for AI
 		clearScreen();
-		render();
+		render(); // TODO: Render FPS
 		fps.limit();
 	}
 

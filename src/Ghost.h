@@ -22,6 +22,7 @@ public:
 
 	pos lastTurnTile;
 	static int scatterTimer;
+	static const char* Name;
 protected:
 	void frightenedDirection(const Map&, const int&);
 	void exitDirection(const Map&);
@@ -53,6 +54,8 @@ public:
 	Pinky(const int&, const int&, const Map&);
 	static void loadAnimations();
 	void reset(const Map&);
+
+	static const char* Name;
 private:
 	void changeAnimation();
 	void chase();
@@ -66,6 +69,8 @@ public:
 	Clyde(const int&, const int&, const Map&);
 	static void loadAnimations();
 	void reset(const Map&);
+
+	static const char* Name;
 private:
 	void changeAnimation();
 	void chase();
@@ -79,6 +84,8 @@ public:
 	Inky(const int&, const int&, const Map&);
 	static void loadAnimations();
 	void reset(const Map&);
+
+	static const char* Name;
 private:
 	void changeAnimation();
 	void chase();
@@ -92,6 +99,8 @@ public:
 	Blinky(const int&, const int&, const Map&);
 	static void loadAnimations();
 	void reset(const Map&);
+
+	static const char* Name;
 private:
 	void changeAnimation();
 	void chase();
