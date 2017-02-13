@@ -17,11 +17,11 @@ class Board:
         self.ghosts_edible = ghosts_edible
 
     def __hash__(self):
-        return hash(tuple(self.ghosts), tuple(self.food), tuple(self.pills), tuple(self.obstacles), tuple(self.power_food), self.pacman)
+        return hash((tuple(self.ghosts), tuple(self.food), tuple(self.pills), tuple(self.obstacles), tuple(self.power_food), self.pacman))
 
     def __eq__(self, other):
         return self.ghosts == other.ghosts and self.food == other.food and self.obstacles == other.obstacles and self.power_food == other.power_food and self.pacman == other.pacman
-        
+
     def get_possible_directions(self, moveable):
         '''get every possible direction for moveable to go'''
         # get pacman position with precision to nearest tile
@@ -34,7 +34,7 @@ class Board:
         down = (moveable_x, moveable_y + 1)
 
         if self.is_within_board(right) and right not in self.obstacles:
-            possible_positions.append(Direction.RIGHT)
+            possible_directions.append(Direction.RIGHT)
 
         if self.is_within_board(left) and left not in self.obstacles:
             possible_directions.append(Direction.LEFT)
@@ -50,12 +50,14 @@ class Board:
     def move_pacman(self, direction):
         self.pacman = self.move(self.pacman, direction)
 
-    def move_ghosts():
+    def move_ghosts(self):
         '''move ghosts at random'''
-        for i in range(self.ghosts):
+        for i in range(len(self.ghosts)):
             possible_directions = self.get_possible_directions(self.ghosts[i])
-            direction = random.choice(possible_positions)
-            self.ghosts[i] = move(self.ghosts[i], direction)
+            if len(possible_directions) == 0:
+                break
+            direction = random.choice(possible_directions)
+            self.ghosts[i] = self.move(self.ghosts[i], direction)
 
     def move(self, moveable, direction):
         '''move either a ghost or pacman'''
