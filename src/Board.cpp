@@ -81,15 +81,22 @@ void Board::drawScore(SDL_Renderer* renderer)
 
 std::string Board::getState(const int& version) const
 {
+    const char* ModeNames[ModeCount] = {
+        "Scatter",
+        "Chase",
+        "Frightened",
+        "Eaten"
+    };
+
 	std::ostringstream stringStream;
 	stringStream << "{ ";
-	stringStream << "version: " << version << ", ";
-	stringStream << "player_pos: [" << player.posX << ", " << player.posX << "], ";
-	stringStream << "{ ghost_name: \"" << blinky.Name << "\", position: [" << blinky.posX << ", " << blinky.posX << "] }, ";
-	stringStream << "{ ghost_name: \"" << inky.Name   << "\", position: [" << inky.posX   << ", " << inky.posX   << "] }, ";
-	stringStream << "{ ghost_name: \"" << pinky.Name  << "\", position: [" << pinky.posX  << ", " << pinky.posX  << "] }, ";
-	stringStream << "{ ghost_name: \"" << clyde.Name  << "\", position: [" << clyde.posX  << ", " << clyde.posX  << "] }, ";
-	stringStream << map.getState(version).c_str();
+	stringStream << "\"version\": " << version << ", ";
+	stringStream << "\"player_pos\": [" << player.posX << ", " << player.posX << "], ";
+	stringStream << "\"" << blinky.Name << "\": { \"position\": [" << blinky.posX << ", " << blinky.posX << "], \"mode\": \"" << ModeNames[blinky.getMode()] << "\" }, ";
+	stringStream << "\"" << inky.Name   << "\": { \"position\": [" << inky.posX   << ", " << inky.posX   << "], \"mode\": \"" << ModeNames[inky.getMode()]   << "\" }, ";
+	stringStream << "\"" << pinky.Name  << "\": { \"position\": [" << pinky.posX  << ", " << pinky.posX  << "], \"mode\": \"" << ModeNames[pinky.getMode()]  << "\" }, ";
+	stringStream << "\"" << clyde.Name  << "\": { \"position\": [" << clyde.posX  << ", " << clyde.posX  << "], \"mode\": \"" << ModeNames[clyde.getMode()]  << "\" }, ";
+	stringStream << "\"map\": " << map.getState(version).c_str();
 	stringStream << " }";
 	return stringStream.str();
 }

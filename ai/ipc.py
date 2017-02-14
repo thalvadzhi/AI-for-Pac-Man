@@ -25,7 +25,11 @@ class PacmanControls:
                 chunks.append(chunk)
             except BlockingIOError as error:
                 break
-        print(b''.join(chunks))
+        messages = b''.join(chunks).split(b'\x00')
+        messages.pop()
+        
+        return json.loads(messages.pop().decode())
+
 
 if __name__ == "__main__":
     controls = PacmanControls()

@@ -8,6 +8,7 @@ enum Mode {
 	Chase,
 	Frightened,
 	Eaten,
+    ModeCount,
 };
 
 class Ghost : public MobileObject 
@@ -19,6 +20,7 @@ public:
 	static bool isGhostWalkable(const char&);
 	void putOnTrack(const Map&);
 	void frighten();
+    Mode getMode() const;
 
 	pos lastTurnTile;
 	static int scatterTimer;

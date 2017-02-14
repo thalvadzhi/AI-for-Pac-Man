@@ -159,7 +159,7 @@ bool Map::load(const char* path)
 std::string Map::getState(const int& version) const
 {
 	std::ostringstream stringStream;
-	stringStream << "{ width: " << width << ", height: " << height << ", map: \"" << map.c_str() << "\" }";
+	stringStream << "{ \"width\": " << width << ", \"height\": " << height << ", \"map\": \"" << map.c_str() << "\" }";
 	return stringStream.str();
 }
 

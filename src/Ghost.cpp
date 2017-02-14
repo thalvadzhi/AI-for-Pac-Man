@@ -179,6 +179,11 @@ void Ghost::exitDirection(const Map& map)
 		setDirection(Up);
 }
 
+Mode Ghost::getMode() const
+{
+    return mode;
+}
+
 void Ghost::direction(const Map & map, const int & movement, bool (*isWalkable)(const char&))
 {
 	unsigned char newDirection = map.chase(posX, posY, target, getDirection(), movement, isWalkable);

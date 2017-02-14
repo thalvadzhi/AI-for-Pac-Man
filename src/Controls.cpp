@@ -5,7 +5,7 @@
 #include <sys/un.h>
 #include <fcntl.h>
 #include "Controls.h"
-#include "Graphics.h"
+#include "Ghost.h"
 
 bool isRunning = true;
 bool isInGame = true;
@@ -132,12 +132,11 @@ void updateAI()
 		return;
 
 	std::string boardState = board.getState(Version);
-	if (write(aiSocketFD, (void*) boardState.c_str(), boardState.length()) < 0) {
-	//	close(aiSocketFD);
-	//	isAIControlled = false;
+    size_t length = boardState.length() + 1;
+	if (write(aiSocketFD, (void*) boardState.c_str(), length) < length) {
+		close(aiSocketFD);
+		isAIControlled = false;
 	}
-
-	printf("%s", boardState.c_str());
 }
 
 void exitGame(const int& status)
