@@ -32,16 +32,16 @@ class Board:
         up = (moveable_x, moveable_y - 1)
         down = (moveable_x, moveable_y + 1)
 
-        if self.is_within_board(right) and right not in self.obstacles and right not in self.ghosts:
+        if self.is_within_board(right) and right not in self.obstacles and (right not in self.ghosts or self.ghosts_edible):
             possible_directions.append(Direction.RIGHT)
 
-        if self.is_within_board(left) and left not in self.obstacles and left not in self.ghosts:
+        if self.is_within_board(left) and left not in self.obstacles and (left not in self.ghosts or self.ghosts_edible):
             possible_directions.append(Direction.LEFT)
 
-        if self.is_within_board(up) and up not in self.obstacles and up not in self.ghosts:
+        if self.is_within_board(up) and up not in self.obstacles and (up not in self.ghosts or self.ghosts_edible):
             possible_directions.append(Direction.UP)
 
-        if self.is_within_board(down) and down not in self.obstacles and down not in self.ghosts:
+        if self.is_within_board(down) and down not in self.obstacles and (down not in self.ghosts or self.ghosts_edible):
             possible_directions.append(Direction.DOWN)
 
         return possible_directions
@@ -87,6 +87,13 @@ class Board:
         if self.pacman in food_list:
             food_list.remove(self.pacman)
         self.food = tuple(food_list)
+
+    def round_moveable(self, moveable):
+        return round(moveable[0]), round(moveable[1])
+
+    def round_pacman(self):
+        ''' round the pacman character to the nearest tile'''
+        return self.round_moveable(self.pacman)
 
     def eat_pill(self):
         pass
