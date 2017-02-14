@@ -37,9 +37,10 @@ public:
 	void lostLive();
 	void initTimers();
 	static void loadTextures(); 
-	
+	std::string getState(const int& version) const;
+
 	Player player;
-	Pinky pinky;
+	Pinky pinky; // TODO: Put the ghosts in an array/map and use polymorphism or do data oriented
 	Inky inky;
 	Blinky blinky;
 	Clyde clyde;

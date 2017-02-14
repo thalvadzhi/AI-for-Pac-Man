@@ -24,6 +24,7 @@ public:
 	void draw(SDL_Renderer*, const pos&);
 	int collisionWall(const int&, const int&, const unsigned char&, bool (*)(const char&)) const;
 	pos findTile(const int&, const int&) const;
+	std::string getState(const int& version) const;
 	char collectableCheck(const int&, const int&);
 	bool isPacmanWalkable(const int&, const int&, bool (*)(const char&)) const;
 	const unsigned char randomTurn(const int&, const int&, const unsigned char&) const;

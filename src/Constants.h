@@ -6,6 +6,8 @@
 using std::string;
 typedef std::pair<int, int> pos;
 
+const 		   int Version = 1; // Use to indicate state info format version (for Saves and AI)
+
 const unsigned int WindowWidth  = 480;
 const unsigned int WindowHeight = 640;
 const unsigned int FPS = 60;

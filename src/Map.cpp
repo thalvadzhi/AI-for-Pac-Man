@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <sstream>
 #include "Map.h"
 #include "Board.h"
 #include "Controls.h"
@@ -153,6 +154,13 @@ bool Map::load(const char* path)
 	height = 33;
 	return true;
 	// TODO : load from file
+}
+
+std::string Map::getState(const int& version) const
+{
+	std::ostringstream stringStream;
+	stringStream << "{ width: " << width << ", height: " << height << ", map: \"" << map.c_str() << "\" }";
+	return stringStream.str();
 }
 
 inline void Map::setTileAt(const int& y, const int& x, const char & tile)
