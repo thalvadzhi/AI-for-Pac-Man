@@ -4,23 +4,22 @@ import random
 step = 1
 
 class Board:
-    def __init__(self, board_size, ghosts, food, pills, obstacles, power_food, pacman, ghosts_edible, step):
+    def __init__(self, board_size, ghosts, food, pills, obstacles,  pacman, ghosts_edible, step=1):
         self.board_size = board_size
         self.width, self.height = self.board_size
-        self.ghosts = ghosts
+        self.ghosts = self.round_moveables(ghosts)
         self.food = food
         self.pills = pills
         self.obstacles = obstacles
         self.pacman = pacman
         self.step = step
-        self.power_food = power_food
         self.ghosts_edible = ghosts_edible
 
     def __hash__(self):
-        return hash((tuple(self.ghosts), tuple(self.food), tuple(self.pills), tuple(self.obstacles), tuple(self.power_food), self.pacman))
+        return hash((tuple(self.ghosts), tuple(self.food), tuple(self.pills), self.pacman))
 
     def __eq__(self, other):
-        return self.ghosts == other.ghosts and self.food == other.food and self.obstacles == other.obstacles and self.power_food == other.power_food and self.pacman == other.pacman
+        return self.ghosts == other.ghosts and self.food == other.food and self.pacman == other.pacman and self.pills == other.pills
 
     def get_possible_directions(self, moveable):
         '''get every possible direction for moveable to go'''
@@ -33,31 +32,43 @@ class Board:
         up = (moveable_x, moveable_y - 1)
         down = (moveable_x, moveable_y + 1)
 
-        if self.is_within_board(right) and right not in self.obstacles:
+        if self.is_within_board(right) and right not in self.obstacles and right not in self.ghosts:
             possible_directions.append(Direction.RIGHT)
 
-        if self.is_within_board(left) and left not in self.obstacles:
+        if self.is_within_board(left) and left not in self.obstacles and left not in self.ghosts:
             possible_directions.append(Direction.LEFT)
 
-        if self.is_within_board(up) and up not in self.obstacles:
+        if self.is_within_board(up) and up not in self.obstacles and up not in self.ghosts:
             possible_directions.append(Direction.UP)
 
-        if self.is_within_board(down) and down not in self.obstacles:
+        if self.is_within_board(down) and down not in self.obstacles and down not in self.ghosts:
             possible_directions.append(Direction.DOWN)
 
         return possible_directions
+
+    def round_moveable(self, moveable):
+        return round(moveable[0]), round(moveable[1])
+
+    def round_moveables(self, moveables):
+        r_moveables = []
+        for moveable in moveables:
+            r_moveables.append(self.round_moveable(moveable))
+        return tuple(r_moveables)
+
 
     def move_pacman(self, direction):
         self.pacman = self.move(self.pacman, direction)
 
     def move_ghosts(self):
         '''move ghosts at random'''
-        for i in range(len(self.ghosts)):
-            possible_directions = self.get_possible_directions(self.ghosts[i])
+        ghost_list = list(self.ghosts)
+        for i in range(len(ghost_list)):
+            possible_directions = self.get_possible_directions(ghost_list[i])
             if len(possible_directions) == 0:
                 break
             direction = random.choice(possible_directions)
-            self.ghosts[i] = self.move(self.ghosts[i], direction)
+            ghost_list[i] = self.move(ghost_list[i], direction)
+            self.ghost = tuple(ghost_list)
 
     def move(self, moveable, direction):
         '''move either a ghost or pacman'''
@@ -72,8 +83,10 @@ class Board:
             return moveable_x, moveable_y + self.step
 
     def eat_food(self):
-        if self.pacman in self.food:
-            self.food.remove(self.pacman)
+        food_list = list(self.food)
+        if self.pacman in food_list:
+            food_list.remove(self.pacman)
+        self.food = tuple(food_list)
 
     def eat_pill(self):
         pass

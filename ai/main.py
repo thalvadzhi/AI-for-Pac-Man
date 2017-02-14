@@ -4,13 +4,18 @@ import queue
 from itertools import permutations
 import random
 import copy
+import time
+from create_board import create_board
+# map_repr = "oooooooooooooooooooooooooooooooWWWWWWWWWWWWWWWWWWWWWWWWWWWWooWPPPPPPPPPPPPwwPPPPPPPPPPPPWooWPwwwwPwwwwwPwwPwwwwwPwwwwPWooWHwoowPwooowPwwPwooowPwoowHWooWPwwwwPwwwwwPwwPwwwwwPwwwwPWooWPPPPPPPPPPPPPPPPPPPPPPPPPPWooWPwwwwPwwPwwwwwwwwPwwPwwwwPWooWPwwwwPwwPwwwwwwwwPwwPwwwwPWooWPPPPPPwwPPPPwwPPPPwwPPPPPPWooWWWWWWPwwwwwpwwpwwwwwPWWWWWWoooooooWPwwwwwpwwpwwwwwPWooooooooooooWPwwppppbbppppwwPWooooooooooooWPwwpcccddcccpwwPWoooooooWWWWWWPwwpcoooooocpwwPWWWWWWoottttttPpppciirrzzcpppPttttttooWWWWWWPwwpcoooooocpwwPWWWWWWoooooooWPwwpccccccccpwwPWooooooooooooWPwwppppppppppwwPWooooooooooooWPwwpwwwwwwwwpwwPWoooooooWWWWWWPwwpwwwwwwwwpwwPWWWWWWooWPPPPPPPPPPPPwwPPPPPPPPPPPPWooWPwwwwPwwwwwPwwPwwwwwPwwwwPWooWPwwwwPwwwwwPwwPwwwwwPwwwwPWooWHPPwwPPPPPPPssPPPPPPPwwPPHWooWwwPwwPwwPwwwwwwwwPwwPwwPwwWooWwwPwwPwwPwwwwwwwwPwwPwwPwwWooWPPPPPPwwPPPPwwPPPPwwPPPPPPWooWPwwwwwwwwwwPwwPwwwwwwwwwwPWooWPwwwwwwwwwwPwwPwwwwwwwwwwPWooWPPPPPPPPPPPPPPPPPPPPPPPPPPWooWWWWWWWWWWWWWWWWWWWWWWWWWWWWooooooooooooooooooooooooooooooo"
+# pacman = (14,24)
+
 
 def heuristic(board):
     weight_food = 10
     weight_power_food = 4
 
     amount_of_food = len(board.food)
-    amount_of_power_food = len(board.power_food)
+    amount_of_power_food = len(board.pills)
 
     food_heuristic = amount_of_food * weight_food
     power_food_heristic = amount_of_power_food * weight_power_food
@@ -38,7 +43,7 @@ def generate_possible_boards(board):
     possible_directions = board.get_possible_directions(board.pacman)
     possible_boards = []
     for direction in possible_directions:
-        new_board = copy.deepcopy(board)
+        new_board = copy.copy(board)
         new_board.move_pacman(direction)
         new_board.move_ghosts()
         new_board.eat_food()
@@ -52,6 +57,7 @@ def search_for_best_node(initial_board, max_depth):
     q.put(PriorityBoard(initial_board, h))
 
     visited = set()
+
     best_h = math.inf
     path_length = dict()
     path_length[initial_board] = 0
@@ -62,14 +68,18 @@ def search_for_best_node(initial_board, max_depth):
         if len(board.food) == 0:
             #we can win the game
             return h
-        best_h = min(best_h, h)
 
-        for new_board, direction in generate_possible_boards(board):
-            if new_board not in visited:
-                depth = path_length[board] + 1;
-                if depth <= max_depth:
+
+        depth = path_length[board] + 1
+
+        if depth <= max_depth:
+            for new_board, direction in generate_possible_boards(board):
+                if new_board not in visited:
                     path_length[new_board] = depth
-                    q.put(PriorityBoard(new_board, depth + heuristic(new_board)))
+                    q.put(PriorityBoard(new_board, h + heuristic(new_board)))
+        else:
+            #means board is a leaf
+            best_h = min(h, best_h)
     return best_h
 
 def send_instruction(direction):
@@ -79,24 +89,11 @@ def send_instruction(direction):
 
 def get_current_board():
     '''get the current state of the board'''
-    coords = list(permutations(range(30), 2))
-    food = []
-    for i in range(300):
-        c = random.choice(coords)
-        food.append(c)
-        coords.remove(c)
+    real_ghost = (14,12)
+    ghosts = [(16,24),(12, 15),(14, 15),(16, 15)]
+    board = create_board(ghosts, pacman, [30, 33], map_repr, False)
 
-    obstacles = coords
-
-    pacman = random.choice(food)
-    food.remove(pacman)
-    ghosts = []
-    for i in range(4):
-        c = random.choice(food)
-        ghosts.append(c)
-        food.remove(c)
-
-    return Board((30, 30), ghosts, food, [], obstacles, [], pacman, False, 1)
+    return board
 
 
     # pass
@@ -107,10 +104,12 @@ class PriorityBoard:
 
     def __lt__(self, other):
         return self.priority < other.priority
+
 def run():
-    MAX_DEPTH = 5
+    MAX_DEPTH = 15
     # while True:
     board = get_current_board()
+    start = time.time()
     # if board.is_game_won():
     #     break
 
@@ -118,10 +117,9 @@ def run():
     for possible_board in generate_possible_boards(board):
         poss_board, direction = possible_board
         board_heuristics.append((direction, search_for_best_node(poss_board, MAX_DEPTH)))
-    best_direction = "GYZ"
     if len(board_heuristics) != 0:
         best_direction = min(board_heuristics, key=lambda x: x[1])[0]
 
     send_instruction(best_direction)
-
+    print(time.time() - start)
 run()
