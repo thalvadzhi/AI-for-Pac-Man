@@ -1,6 +1,7 @@
 import socket
 import time
 import random
+import json
 
 class PacmanControls:
     CONTROLS = { "Up": b"U", "Down": b"D", "Left": b"L", "Right": b"R" } 
@@ -19,14 +20,17 @@ class PacmanControls:
     def get_game_state(self):
         chunks = []
         while True:
-            chunk = self.sock.recv(2048)
-            if chunk == b'':
-                break;
-            chunks.append(chunk)
+            try:
+                chunk = self.sock.recv(4096)
+                chunks.append(chunk)
+            except BlockingIOError as error:
+                break
         print(b''.join(chunks))
 
-controls = PacmanControls()
-while True:
-    time.sleep(1)
-    controls.move(random.choice(["Up", "Down", "Left", "Right"]))
+if __name__ == "__main__":
+    controls = PacmanControls()
+    while True:
+        time.sleep(1)
+        controls.move(random.choice(["Up", "Down", "Left", "Right"]))
+        controls.get_game_state();
 

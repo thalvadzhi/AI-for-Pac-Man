@@ -59,7 +59,7 @@ void handleInput()
 	}
     if (isAIControlled) {
 		char buffer;
-		while(read(aiSocketFD, &buffer, sizeof(buffer)) > 0);
+		read(aiSocketFD, &buffer, sizeof(buffer));
 
 		switch (buffer) {
 			case aiUp:
@@ -133,8 +133,8 @@ void updateAI()
 
 	std::string boardState = board.getState(Version);
 	if (write(aiSocketFD, (void*) boardState.c_str(), boardState.length()) < 0) {
-		close(aiSocketFD);
-		isAIControlled = false;
+	//	close(aiSocketFD);
+	//	isAIControlled = false;
 	}
 
 	printf("%s", boardState.c_str());
@@ -144,6 +144,7 @@ void exitGame(const int& status)
 {
 	SDL_Delay(3000);
 	quitGraphics();
+    close(aiSocketFD);
 	std::exit(status);
 }
 
