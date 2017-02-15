@@ -63,9 +63,9 @@ void Board::update()
 	lastUpdateTicks = currentTicks;
 }
 
-Board::Board() : 
-	map(MMap), 
-	player(map.playerStart.first, map.playerStart.second), 
+Board::Board() :
+	map(MMap),
+	player(map.playerStart.first, map.playerStart.second),
 	inky(map.inkyStart.first, map.inkyStart.second, map),
 	pinky(map.pinkyStart.first, map.pinkyStart.second, map),
 	clyde(map.clydeStart.first, map.clydeStart.second, map),
@@ -91,11 +91,11 @@ std::string Board::getState(const int& version) const
 	std::ostringstream stringStream;
 	stringStream << "{ ";
 	stringStream << "\"version\": " << version << ", ";
-	stringStream << "\"player_pos\": [" << player.posX << ", " << player.posX << "], ";
-	stringStream << "\"" << blinky.Name << "\": { \"position\": [" << blinky.posX << ", " << blinky.posX << "], \"mode\": \"" << ModeNames[blinky.getMode()] << "\" }, ";
-	stringStream << "\"" << inky.Name   << "\": { \"position\": [" << inky.posX   << ", " << inky.posX   << "], \"mode\": \"" << ModeNames[inky.getMode()]   << "\" }, ";
-	stringStream << "\"" << pinky.Name  << "\": { \"position\": [" << pinky.posX  << ", " << pinky.posX  << "], \"mode\": \"" << ModeNames[pinky.getMode()]  << "\" }, ";
-	stringStream << "\"" << clyde.Name  << "\": { \"position\": [" << clyde.posX  << ", " << clyde.posX  << "], \"mode\": \"" << ModeNames[clyde.getMode()]  << "\" }, ";
+	stringStream << "\"player_pos\": [" << player.posX << ", " << player.posY << "], ";
+	stringStream << "\"" << blinky.Name << "\": { \"position\": [" << blinky.posX << ", " << blinky.posY << "], \"mode\": \"" << ModeNames[blinky.getMode()] << "\" }, ";
+	stringStream << "\"" << inky.Name   << "\": { \"position\": [" << inky.posX   << ", " << inky.posY   << "], \"mode\": \"" << ModeNames[inky.getMode()]   << "\" }, ";
+	stringStream << "\"" << pinky.Name  << "\": { \"position\": [" << pinky.posX  << ", " << pinky.posY  << "], \"mode\": \"" << ModeNames[pinky.getMode()]  << "\" }, ";
+	stringStream << "\"" << clyde.Name  << "\": { \"position\": [" << clyde.posX  << ", " << clyde.posY  << "], \"mode\": \"" << ModeNames[clyde.getMode()]  << "\" }, ";
 	stringStream << "\"map\": " << map.getState(version).c_str();
 	stringStream << " }";
 	return stringStream.str();
@@ -103,7 +103,7 @@ std::string Board::getState(const int& version) const
 
 void Board::lostLive()
 {
-	if (!(--player.lives)) 
+	if (!(--player.lives))
 		exitGame(0);
 
 	initTimers();
@@ -128,7 +128,7 @@ void Board::drawIngameInfo(SDL_Renderer * renderer)
 	drawScore(renderer);
 }
 
-Player::Player(const int& posX, const int& posY) : MobileObject(posX, posY) 
+Player::Player(const int& posX, const int& posY) : MobileObject(posX, posY)
 {
 	currentAnimation = &walk;
 }
@@ -171,8 +171,8 @@ void Player::move(Map& map)
 	if (!(movement = frameDistance(PacmanMoveSpeed)))
 		return;
 	lastMoveTicks = SDL_GetTicks();
-	
-	for (int step = movement >= TileSize ? TileSize - 1 : movement; movement > 0; 
+
+	for (int step = movement >= TileSize ? TileSize - 1 : movement; movement > 0;
 			movement -= step, step = movement >= TileSize ? TileSize - 1 : movement) {
 		switch (getDirection()) {
 		case Up:

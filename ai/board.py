@@ -27,10 +27,10 @@ class Board:
         moveable_x, moveable_y = round(moveable[0]), round(moveable[1])
         possible_directions = []
 
-        right = (moveable_x + 1, moveable_y)
-        left = (moveable_x - 1, moveable_y)
-        up = (moveable_x, moveable_y - 1)
-        down = (moveable_x, moveable_y + 1)
+        right = (moveable_x + self.step, moveable_y)
+        left = (moveable_x - self.step, moveable_y)
+        up = (moveable_x, moveable_y - self.step)
+        down = (moveable_x, moveable_y + self.step)
 
         if self.is_within_board(right) and right not in self.obstacles and (right not in self.ghosts or self.ghosts_edible):
             possible_directions.append(Direction.RIGHT)
