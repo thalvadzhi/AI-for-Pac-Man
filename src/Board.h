@@ -36,6 +36,7 @@ public:
 	void onPillCollected();
 	void lostLive();
 	void initTimers();
+    int getGameTime() const;
 	static void loadTextures(); 
 	std::string getState(const int& version) const;
 
@@ -47,6 +48,7 @@ public:
 	pos drawLocation;
 private:
 	Text score;
+    int gameTime;
 	unsigned char cherries = 2;
 	static Texture cherry;
 	static Texture live;

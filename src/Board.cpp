@@ -24,6 +24,11 @@ void Board::initTimers()
 	inky.lastMoveTicks = currentTicks;
 }
 
+int Board::getGameTime() const
+{
+    return gameTime;
+}
+
 void Board::draw(SDL_Renderer* renderer)
 {
 	map.draw(renderer, drawLocation);
@@ -49,7 +54,9 @@ void Board::update()
 	if (map.isCleared)
 		exitGame(0);
 
-	unsigned int currentTicks = SDL_GetTicks();
+	int lastGameTime = gameTime;
+	if (!isGamePaused())
+    	gameTime += SDL_GetTicks() - lastUpdateTicks;
 
 	player.move(map);
 	blinky.move(map);
@@ -57,10 +64,9 @@ void Board::update()
 	inky.move(map);
 	clyde.move(map);
 
-	currentTicks = (currentTicks + SDL_GetTicks()) / 2;
 	if (Ghost::scatterTimer > 0)
-		Ghost::scatterTimer -= currentTicks - lastUpdateTicks;
-	lastUpdateTicks = currentTicks;
+		Ghost::scatterTimer -= gameTime - lastGameTime;
+	lastUpdateTicks = SDL_GetTicks();
 }
 
 Board::Board() :
@@ -168,9 +174,9 @@ void Player::tryTurn(const Map& map)
 void Player::move(Map& map)
 {
 	int movement = 0;
-	if (!(movement = frameDistance(PacmanMoveSpeed)))
+	if (!(movement = frameDistance(PacmanMoveSpeed, []() -> int { return ::board.getGameTime(); })))
 		return;
-	lastMoveTicks = SDL_GetTicks();
+	lastMoveTicks = board.getGameTime();
 
 	for (int step = movement >= TileSize ? TileSize - 1 : movement; movement > 0;
 			movement -= step, step = movement >= TileSize ? TileSize - 1 : movement) {

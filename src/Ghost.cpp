@@ -43,9 +43,9 @@ void Ghost::move(Map& map)
 {
 	bool(*isWalkable)(const char&) = nullptr;
 	int movement = 0;
-	if (!(movement = frameDistance(getSpeed())))
+	if (!(movement = frameDistance(getSpeed(), []() -> int { return ::board.getGameTime(); })))
 		return;
-	unsigned int frameDuration = SDL_GetTicks() - lastMoveTicks;
+	unsigned int frameDuration = (unsigned int)(board.getGameTime() - lastMoveTicks);
 	lastMoveTicks += frameDuration;
 
 	int scatterTimer = Ghost::scatterTimer;
@@ -64,7 +64,7 @@ void Ghost::move(Map& map)
 			else
 				frightenedTimer -= duration;
 		}
-		if (scatterTimer < 0) {
+		if (scatterTimer <= 0) {
 			if (mode == Scatter) {
 				mode = Chase;
 				reverseDirection();
@@ -100,7 +100,7 @@ void Ghost::move(Map& map)
 		else {
 			target = map.blinkyStart;
 			cagedTimer -= duration;
-			if (cagedTimer < 0)
+			if (cagedTimer <= 0)
 				exitDirection(map);
 			isWalkable = isCagedWalkable;
 			if (reachedTarget()) {
@@ -173,7 +173,7 @@ void Ghost::exitDirection(const Map& map)
 {
 	if (posX < map.blinkyStart.first)
 		setDirection(Right);
-	else if (posX >  map.blinkyStart.first)
+	else if (posX > map.blinkyStart.first)
 		setDirection(Left);
 	else
 		setDirection(Up);
