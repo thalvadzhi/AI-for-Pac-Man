@@ -6,8 +6,9 @@ Dot = 'P';
 Pill = 'H';
 InnerWall = 'w';
 OuterWall = 'W';
+Cage = 'c'
 TILE_SIZE = 15
-OBSTACLES_REPR = [Outside, InnerWall, OuterWall]
+OBSTACLES_REPR = [Outside, InnerWall, OuterWall, Cage]
 
 def create_board(ghosts, pacman, map_size, map_repr, ghosts_edible):
     ''' ghosts is a list of tuples, pacman and map_size are tuples,
@@ -17,8 +18,6 @@ def create_board(ghosts, pacman, map_size, map_repr, ghosts_edible):
     food = []
     pills = []
     obstacles = []
-
-
 
 
     for i in range(len(map_repr)):
