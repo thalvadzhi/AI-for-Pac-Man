@@ -614,6 +614,7 @@ void Player::reset(const Data& data)
 {
     posX = data.playerStart.first;
     posY = data.playerStart.second;
+    turn = 'U';
     MobileObject::reset(data);
 }
 
@@ -663,7 +664,7 @@ void Inky::reset(const Data& data)
 
 void MobileObject::reset(const Data& data)
 {
-    direction = 0;
+    direction = char('U');
 }
 
 void Blinky::chase(const Data& data)
@@ -1025,6 +1026,7 @@ static PyObject* simulate(PyObject *self, PyObject *args, PyObject *keywds) {
     }
 
 #if defined(DEBUG)
+    printf("PLAYER\n");
     printf("lives: %d\n", data.player.lives);
     printf("score: %d\n", data.player.score);
     printf("streak: %d\n", data.player.streak);
@@ -1105,8 +1107,10 @@ static PyObject* simulate(PyObject *self, PyObject *args, PyObject *keywds) {
 
 #if defined(DEBUG)
         printf("Ghost: %s\n", names[i]);
-        printf("mode: %s\n", ModeNames[ghosts[i]->mode]);
-        printf("pos: [%d, %d]\n", ghosts[i]->posX, ghosts[i]->posY);
+        printf("pos: [%d, %d]/direction: %c\n", ghosts[i]->posX, ghosts[i]->posY, ghosts[i]->direction);
+        printf("target: [%d, %d]\n", ghosts[i]->target.first, ghosts[i]->target.second);
+        printf("frightened_timer: %d/caged_timer: %d\n", ghosts[i]->frightenedTimer, ghosts[i]->cagedTimer);
+        printf("mode: %s/caged: %s\n", ModeNames[ghosts[i]->mode], ghosts[i]->caged ? "True" : "False");
 #endif
 
         CHECK((available == 8), "Missing ghost data")
@@ -1190,7 +1194,7 @@ static PyObject* simulate(PyObject *self, PyObject *args, PyObject *keywds) {
 
         const char dir[] = { char(ghosts[i]->direction), '\0' };
         res = PyDict_SetItemString(pGhost, "direction", obj = PyBytes_FromString(dir)); Py_DECREF(obj);
-        res += PyDict_SetItemString(pGhost, "mode", obj = PyBytes_FromString(ModeNames[0])); Py_DECREF(obj);
+        res += PyDict_SetItemString(pGhost, "mode", obj = PyBytes_FromString(ModeNames[ghosts[i]->mode])); Py_DECREF(obj);
         res += PyDict_SetItemString(pGhost, "position", obj = CreatePythonListFromPos(ghosts[i]->posX, ghosts[i]->posY)); Py_DECREF(obj);
         res += PyDict_SetItemString(pGhost, "target", obj = CreatePythonListFromPos(ghosts[i]->target.first, ghosts[i]->target.second)); Py_DECREF(obj);
         res += PyDict_SetItemString(pGhost, "last_turn_tile", obj = CreatePythonListFromPos(ghosts[i]->lastTurnTile.first, ghosts[i]->lastTurnTile.second)); Py_DECREF(obj);
