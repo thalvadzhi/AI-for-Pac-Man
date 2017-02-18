@@ -10,7 +10,7 @@ Cage = 'c'
 TILE_SIZE = 15
 OBSTACLES_REPR = [Outside, InnerWall, OuterWall, Cage]
 
-def create_board(ghosts, pacman, map_size, map_repr, ghosts_edible):
+def create_board(ghosts, pacman, map_size, map_repr, edible_ghosts, mitak_repr):
     ''' ghosts is a list of tuples, pacman and map_size are tuples,
         map_repr is a string '''
 
@@ -34,4 +34,4 @@ def create_board(ghosts, pacman, map_size, map_repr, ghosts_edible):
     # print(obstacles)
         # converting to tuples at the end in order to make the Board object immutable for all intents and purposes
         # thus I can use the much faster copy.copy instead of copy.deepcopy
-    return Board(map_size, tuple(ghosts), tuple(food), tuple(pills), set(obstacles), tuple(pacman), ghosts_edible, 1)
+    return Board(map_size, tuple(ghosts), tuple(food), tuple(pills), set(obstacles), tuple(pacman), edible_ghosts, mitak_repr ,1)

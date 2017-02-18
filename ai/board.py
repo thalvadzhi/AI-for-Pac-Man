@@ -1,10 +1,15 @@
 from direction import Direction
+from CONSTANTS import TILE_SIZE
 import random
+import pacman
+
 
 step = 1
+GHOST_NAMES = ["Inky", "Blinky", "Clyde", "Pinky"]
+MITAK_DIRECTIONS = {Direction.UP: b"U", Direction.DOWN: b"D", Direction.LEFT: b"L", Direction.RIGHT: b"R"}
 
 class Board:
-    def __init__(self, board_size, ghosts, food, pills, obstacles,  pacman, ghosts_edible, step=1):
+    def __init__(self, board_size, ghosts, food, pills, obstacles,  pacman, edible_ghosts, mitak_repr, step=1):
         self.board_size = board_size
         self.width, self.height = self.board_size
         self.ghosts = self.round_moveables(ghosts)
@@ -13,7 +18,10 @@ class Board:
         self.obstacles = obstacles
         self.pacman = pacman
         self.step = step
-        self.ghosts_edible = ghosts_edible
+        self.edible_ghosts = edible_ghosts
+        self.mitak_repr = mitak_repr
+        self.mitak_repr.pop('Version', None)
+
 
     def __hash__(self):
         return hash((tuple(self.ghosts), tuple(self.food), tuple(self.pills), self.pacman))
@@ -32,19 +40,23 @@ class Board:
         up = (moveable_x, moveable_y - self.step)
         down = (moveable_x, moveable_y + self.step)
 
-        if self.is_within_board(right) and right not in self.obstacles and (right not in self.ghosts or self.ghosts_edible):
+        if self.is_within_board(right) and right not in self.obstacles and (right not in self.ghosts or self.ghosts_edible()):
             possible_directions.append(Direction.RIGHT)
 
-        if self.is_within_board(left) and left not in self.obstacles and (left not in self.ghosts or self.ghosts_edible):
+        if self.is_within_board(left) and left not in self.obstacles and (left not in self.ghosts or self.ghosts_edible()):
             possible_directions.append(Direction.LEFT)
 
-        if self.is_within_board(up) and up not in self.obstacles and (up not in self.ghosts or self.ghosts_edible):
+        if self.is_within_board(up) and up not in self.obstacles and (up not in self.ghosts or self.ghosts_edible()):
             possible_directions.append(Direction.UP)
 
-        if self.is_within_board(down) and down not in self.obstacles and (down not in self.ghosts or self.ghosts_edible):
+        if self.is_within_board(down) and down not in self.obstacles and (down not in self.ghosts or self.ghosts_edible()):
             possible_directions.append(Direction.DOWN)
 
         return possible_directions
+
+    def ghosts_edible(self):
+        '''returns true if there are any edible ghosts'''
+        return len(self.edible_ghosts) > 0
 
     def round_moveable(self, moveable):
         return round(moveable[0]), round(moveable[1])
@@ -58,6 +70,40 @@ class Board:
 
     def move_pacman(self, direction):
         self.pacman = self.move(self.pacman, direction)
+
+    def binarize(self):
+        # print(self.mitak_repr)
+        for ghost_name in GHOST_NAMES:
+            self.mitak_repr[ghost_name]['mode'] = self.encode_or_noop(self.mitak_repr[ghost_name]['mode'])
+            self.mitak_repr[ghost_name]['direction'] = self.encode_or_noop(self.mitak_repr[ghost_name]['direction'])
+        self.mitak_repr['Player']['direction'] = self.encode_or_noop(self.mitak_repr['Player']['direction'])
+        self.mitak_repr['Player']['turn'] = self.encode_or_noop(self.mitak_repr['Player']['turn'])
+        self.mitak_repr['Map']['map'] = self.encode_or_noop(self.mitak_repr['Map']['map'])
+
+    def encode_or_noop(self, string):
+        if type(string) != bytes:
+            return string.encode('ascii')
+        else:
+            return string
+
+    def move_ghosts_mitak(self, pacman_direction):
+        mitak_direction = MITAK_DIRECTIONS[pacman_direction]
+        # self.move_pacman(pacman_direction)
+        self.binarize()
+
+        self.mitak_repr['Player']['turn'] = mitak_direction
+        self.mitak_repr['Board']['simulation_step'] = 500
+        # print(self.mitak_repr)
+        self.mitak_repr = pacman.simulate(**(self.mitak_repr))
+        self.binarize()
+
+        ghosts = []
+        for ghost_name in GHOST_NAMES:
+            ghosts.append(weird_mitak_pos_to_tile_pos(self.mitak_repr[ghost_name]['position']))
+        self.ghosts = tuple(ghosts)
+        # print(self.ghosts)
+        self.pacman = weird_mitak_pos_to_tile_pos(self.mitak_repr['Player']['position'])
+
 
     def move_ghosts(self):
         '''move ghosts at random'''
@@ -108,3 +154,11 @@ class Board:
 
     def is_game_won(self):
         return len(self.food) == 0
+
+def weird_mitak_pos_to_tile_pos(item):
+
+    x, y = item
+
+    new_x = x // TILE_SIZE
+    new_y = y // TILE_SIZE
+    return new_x, new_y

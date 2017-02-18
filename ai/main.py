@@ -1,4 +1,5 @@
 from board import Board
+import pacman as pc
 import math
 import queue
 from itertools import permutations
@@ -68,15 +69,15 @@ def heuristic(board, target):
     pill_heristic = amount_of_pill * weight_pill
 
     distance_to_target_heuristic = manhatten_dist(board.round_pacman(), target) * weight_target_dist
-    return distance_to_target_heuristic + ghost_heuristic(board.ghosts, board.pacman, board.ghosts_edible()) + food_heuristic + pill_heristic
+    return  ghost_heuristic(board.ghosts, board.pacman, board.ghosts_edible()) + distance_to_target_heuristic
 
 def ghost_heuristic(ghosts, pacman, edible):
     if edible:
         # if ghosts are edible there should not be any penalty when approaching them
         return 0
-    for ghost in ghosts:
-        if ghost == pacman:
-            return math.inf
+    # for ghost in ghosts:
+    #     if ghost == pacman:
+    #         return math.inf
 
     weight = 10000
     heuristic = 0
@@ -85,7 +86,10 @@ def ghost_heuristic(ghosts, pacman, edible):
     for ghost in ghosts:
         dists.append(manhatten_dist(ghost, pacman))
 
+
     min_dist = min(dists)
+
+    # print(min_dist)
 
     if min_dist == 0:
         min_dist = 1
@@ -107,8 +111,9 @@ def generate_possible_boards(board):
     possible_boards = []
     for direction in possible_directions:
         new_board = copy.copy(board)
-        new_board.move_pacman(direction)
-        new_board.move_ghosts()
+        # new_board.move_pacman(direction)
+        # new_board.move_ghosts()
+        new_board.move_ghosts_mitak(direction)
         new_board.eat_food()
         possible_boards.append((new_board, direction))
     return possible_boards
@@ -135,8 +140,9 @@ def search_for_best_direction(initial_board, max_depth, target, last_direction):
         visited.add(board)
         if len(board.food) == 0:
             return find_initial_direction(board, initial_board, directions)
-        if target == board.pacman:
+        if target == board.round_pacman():
             if initial_h - h > -200:
+                print("yes")
                 # if check_dead_end(current_direction[0], initial_board):
                 return find_initial_direction(board, initial_board, directions)
                 # elif abs(initial_h - h) <= 50:
@@ -197,8 +203,10 @@ def get_current_board(control):
     # # pacman_2 = (10,24)
     #
     # board = create_board(ghosts, pacman, [30, 33], map_repr, False)
-    tile_size = 15
+
+    tile_size = 5
     state = control.get_game_state()
+    # print(state)
     if state is None:
         return None
     inky_position = weird_mitak_pos_to_tile_pos(state['Inky']['position'])
@@ -215,15 +223,15 @@ def get_current_board(control):
 
     ghosts = [inky_position, blinky_position, pinky_position, clyde_position]
 
-    pacman = weird_mitak_pos_to_tile_pos(state['player']['position'])
+    pacman = weird_mitak_pos_to_tile_pos(state['Player']['position'])
     ghosts_mode = [(inky_position, inky_mode), (blinky_position, blinky_mode), (pinky_position, pinky_mode), (clyde_position, clyde_mode)]
 
 
 
-    width = state['map']['width']
-    height = state['map']['height']
+    width = state['Map']['width']
+    height = state['Map']['height']
 
-    map_repr = state['map']['map']
+    map_repr = state['Map']['map']
     edible_ghosts = []
     for ghost in ghosts_mode:
         if ghost[1] == "Frightened":
@@ -233,7 +241,7 @@ def get_current_board(control):
     # elif time.time() - fright_started[0] > 5:
     #     fright_started[0] = None
     #     ghosts_edible = False
-    board = create_board(ghosts, pacman, (width, height), map_repr, [])
+    board = create_board(ghosts, pacman, (width, height), map_repr, [], state)
 
     return board
 
@@ -241,8 +249,8 @@ def weird_mitak_pos_to_tile_pos(item):
 
     x, y = item
 
-    new_x = round(x / TILE_SIZE)
-    new_y = round((2 * y - TILE_SIZE) / (2 * TILE_SIZE))
+    new_x = x // TILE_SIZE
+    new_y = y // TILE_SIZE
     return new_x, new_y
     # pass
 class PriorityBoard:
@@ -286,6 +294,7 @@ def run():
         #         last_target_time = time.time()
         target_p = choose_target(board)
 
+
         # if time.time() - last_target_time > 5:
         #     print("took too long")
         #     target_p = choose_target(board)
@@ -295,13 +304,9 @@ def run():
 
         bests = []
         if target_p is not None:
-            # if ghost_heuristic(board.ghosts, board.pacman, False)  0:
-                # best_direction = choose_board_with_least_ghost_heuristic(board)
-            # else:
-
-                best_direction = search_for_best_direction(board, MAX_DEPTH, target_p, best_direction)
-                if best_direction is not Direction.STAY:
-                    current_direction[0] = best_direction
+            best_direction = search_for_best_direction(board, MAX_DEPTH, target_p, best_direction)
+            if best_direction is not Direction.STAY:
+                current_direction[0] = best_direction
         else:
             best_direction = ""
         # print(board.pacman, board.ghosts)
@@ -309,20 +314,34 @@ def run():
         if best_direction != "":
             # print(best_direction)
             send_instruction(control, best_direction)
+            time.sleep(0.1)
             # time.sleep(0.08)
             # pass
             # time.sleep(0.1)
 
     # print(time.time() - start)
-
+def to_weird_mitak(item):
+    x, y = item
+    return x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE // 2
 def run_staged():
-    pacman = (22, 20)
+    pcman = (22, 20)
     ghost = (22,15)
     food = (22, 17)
-    board = board = create_board([ghost], pacman, [30, 33], map_repr, False)
-    MAX_DEPTH = 10
+
+    key_v = {'Map' : { "map": map_repr.encode('ascii'), "width": 30, "height": 33},
+    'Inky' :  { "mode": b"Scatter", "position": [0,0], "direction": b'U', "target": [225, 367], "last_turn_tile": [0, 0], "frightened_timer": 0, "caged_timer": 0, "caged": False },
+    'Blinky': { "mode": b"Scatter", "position": [0, 0], "direction": b'U', "target": [225, 367], "last_turn_tile": [0, 0], "frightened_timer": 0, "caged_timer": 0, "caged": False },
+    'Clyde':  { "mode": b"Scatter", "position": [0,0], "direction": b'U', "target": [225, 367], "last_turn_tile": [0, 0], "frightened_timer": 0, "caged_timer": 0, "caged": False },
+    'Pinky':  { "mode": b"Scatter", "position": list(to_weird_mitak(ghost)), "direction": b'U', "target": [225, 367], "last_turn_tile": [0, 0], "frightened_timer": 0, "caged_timer": 0, "caged": False },
+    'Player': { "position": list(to_weird_mitak(pcman)), "direction": b"R", "turn": b'D', "lives":3, "streak":1, "score": 2000 },
+    'Board': { "scatter_timer": 0, "simulation_step": 2000 } }
+
+    pc.simulate(**key_v)
+
+    board = board = create_board([ghost], pcman, [30, 33], map_repr, [], key_v)
+    MAX_DEPTH = 1
     target = food
-    best_direction = search_for_best_direction(board, MAX_DEPTH, target)
+    best_direction = search_for_best_direction(board, MAX_DEPTH, target, None)
     print(best_direction)
-# run()
 run()
+# run_staged()
