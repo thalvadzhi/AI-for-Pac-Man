@@ -1168,8 +1168,10 @@ static PyObject* simulate(PyObject *self, PyObject *args, PyObject *keywds) {
         PyObject *pPlayer = PyDict_New();
         CHECK(PyDict_Check(pPlayer), "Failed to create player dict");
 
-        const char dir[] = { char(data.player.direction), '\0' };
+        char dir[] = { char(data.player.direction), '\0' };
         res = PyDict_SetItemString(pPlayer, "direction", obj = PyBytes_FromString(dir)); Py_DECREF(obj);
+        dir[0] = char(data.player.turn);
+        res = PyDict_SetItemString(pPlayer, "turn", obj = PyBytes_FromString(dir)); Py_DECREF(obj);
         res += PyDict_SetItemString(pPlayer, "score", obj = PyLong_FromLong(data.player.score)); Py_DECREF(obj);
         res += PyDict_SetItemString(pPlayer, "lives", obj = PyLong_FromLong(data.player.lives)); Py_DECREF(obj);
         res += PyDict_SetItemString(pPlayer, "streak", obj = PyLong_FromLong(data.player.streak)); Py_DECREF(obj);
@@ -1210,7 +1212,7 @@ static PyObject* simulate(PyObject *self, PyObject *args, PyObject *keywds) {
         res = PyDict_SetItemString(pBoard, "simulation_step", obj = PyLong_FromLong(data.simulationStep)); Py_DECREF(obj);
         res += PyDict_SetItemString(pBoard, "scatter_timer", obj = PyLong_FromLong(data.scatterTimer)); Py_DECREF(obj);
 
-        res += PyDict_SetItemString(pResult, "Map", pBoard); Py_DECREF(pBoard);
+        res += PyDict_SetItemString(pResult, "Board", pBoard); Py_DECREF(pBoard);
 
         CHECK((res == 0), "Failed to set board data");
     }
