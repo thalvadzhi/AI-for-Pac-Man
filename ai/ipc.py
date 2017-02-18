@@ -38,5 +38,5 @@ if __name__ == "__main__":
     controls = PacmanControls()
     while True:
         time.sleep(1)
-        controls.move(random.choice(["Up", "Down", "Left", "Right"]))
+        controls.move(random.choice([Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]))
         controls.get_game_state();

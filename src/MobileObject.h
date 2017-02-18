@@ -36,7 +36,7 @@ public:
 	}
 protected:
 	Animation* currentAnimation;
-	int frameDistance(const int&) const;
+	int frameDistance(const int&, int (*)(void)) const;
 
 	inline void setDirection(const unsigned char& direction)
 	{

@@ -6,6 +6,7 @@ extern bool isRunning;
 extern bool isInGame;
 extern Board board;
 
+bool isGamePaused();
 bool useAIControls(const bool& = true);
 void updateAI();
 void handleInput();

@@ -140,7 +140,7 @@ void Text::render()
 		printf("TTF create texture error: %s", SDL_GetError());
 		exitGame(1);
 	}
-	SDL_QueryTexture(texture.get(), NULL, NULL, &position.w, &position.h);
+	SDL_QueryTexture(texture.get(), nullptr, nullptr, &position.w, &position.h);
 }
 
 bool Text::init()

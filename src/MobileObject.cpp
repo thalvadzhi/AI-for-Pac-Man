@@ -35,9 +35,9 @@ void MobileObject::reset(const Map &)
 	movementInfo = 0;
 }
 
-int MobileObject::frameDistance(const int& speed) const
+int MobileObject::frameDistance(const int& speed, int (*timer)(void)) const
 {
-	int currentTicks = SDL_GetTicks();
+	int currentTicks = timer();
 	int movement = int(speed * ((currentTicks - lastMoveTicks) / 1000.0f));
 	if (movement) {
 		return movement;

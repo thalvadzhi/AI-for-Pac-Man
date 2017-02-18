@@ -5,24 +5,15 @@
 #include <sys/un.h>
 #include <fcntl.h>
 #include "Controls.h"
-#include "Ghost.h"
 
 bool isRunning = true;
-bool isInGame = true;
+bool isPaused = false;
 Board board;
 
-static bool isAIControlled = true;
-static char* mmapForExternalAI = nullptr;
+static bool isAIControlled = false;
 static int aiSocketFD = -1;
 
 static const char* aiSocketAddress = "./pacman_ai_socket";
-
-enum AIControls : char {
-		aiUp    = 'U',
-		aiDown  = 'D',
-		aiLeft  = 'L',
-		aiRight = 'R',
-};
 
 void handleInput()
 {
@@ -34,6 +25,11 @@ void handleInput()
 			isRunning = false;
 			break;
 		case SDL_KEYDOWN:
+            switch (curEvent.key.keysym.sym) {
+                case SDLK_p:
+                    isPaused = !isPaused;
+                    break;
+            }
 			if (!isAIControlled) {
                 switch (curEvent.key.keysym.sym) {
                 case SDLK_w:
@@ -76,6 +72,11 @@ void handleInput()
 				break;
 		}
 	}
+}
+
+bool isGamePaused()
+{
+    return isPaused;
 }
 
 bool useAIControls(const bool& useAI)

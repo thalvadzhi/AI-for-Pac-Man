@@ -1,3 +1,4 @@
+#include <sstream>
 #include "Ghost.h"
 #include "Constants.h"
 #include "Controls.h"
@@ -43,9 +44,9 @@ void Ghost::move(Map& map)
 {
 	bool(*isWalkable)(const char&) = nullptr;
 	int movement = 0;
-	if (!(movement = frameDistance(getSpeed())))
+	if (!(movement = frameDistance(getSpeed(), []() -> int { return ::board.getGameTime(); })))
 		return;
-	unsigned int frameDuration = SDL_GetTicks() - lastMoveTicks;
+	unsigned int frameDuration = (unsigned int)(board.getGameTime() - lastMoveTicks);
 	lastMoveTicks += frameDuration;
 
 	int scatterTimer = Ghost::scatterTimer;
@@ -64,7 +65,7 @@ void Ghost::move(Map& map)
 			else
 				frightenedTimer -= duration;
 		}
-		if (scatterTimer < 0) {
+		if (scatterTimer <= 0) {
 			if (mode == Scatter) {
 				mode = Chase;
 				reverseDirection();
@@ -100,7 +101,7 @@ void Ghost::move(Map& map)
 		else {
 			target = map.blinkyStart;
 			cagedTimer -= duration;
-			if (cagedTimer < 0)
+			if (cagedTimer <= 0)
 				exitDirection(map);
 			isWalkable = isCagedWalkable;
 			if (reachedTarget()) {
@@ -173,7 +174,7 @@ void Ghost::exitDirection(const Map& map)
 {
 	if (posX < map.blinkyStart.first)
 		setDirection(Right);
-	else if (posX >  map.blinkyStart.first)
+	else if (posX > map.blinkyStart.first)
 		setDirection(Left);
 	else
 		setDirection(Up);
@@ -182,6 +183,28 @@ void Ghost::exitDirection(const Map& map)
 Mode Ghost::getMode() const
 {
     return mode;
+}
+
+std::string Ghost::getState(const int& version) const
+{
+    const char* ModeNames[ModeCount];
+    ModeNames[Scatter]    = "Scatter";
+    ModeNames[Chase]      = "Chase";
+    ModeNames[Frightened] = "Frightened";
+    ModeNames[Eaten]      = "Eaten";
+
+    std::ostringstream stringStream;
+    stringStream << "{ ";
+    stringStream << "\"position\": [" << posX << ", " << posY << "], ";
+    stringStream << "\"target\": [" << target.first << ", " << target.second << "], ";
+    stringStream << "\"last_turn_tile\": [" << lastTurnTile.first << ", " << lastTurnTile.second << "], ";
+    stringStream << "\"mode\": \"" << ModeNames[mode] << "\", ";
+    stringStream << "\"caged\": " << (caged ? "true" : "false") << ", ";
+    stringStream << "\"caged_timer\": " << cagedTimer << ", ";
+    stringStream << "\"frightened_timer\": " << frightenedTimer << ", ";
+    stringStream << "\"direction\": \"" << AIDirections[getDirection()] << "\"";
+    stringStream << " }";
+    return stringStream.str();
 }
 
 void Ghost::direction(const Map & map, const int & movement, bool (*isWalkable)(const char&))

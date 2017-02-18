@@ -14,6 +14,7 @@ public:
 	void turn(const unsigned char&);
 	void reset(const Map&);
 	static void loadAnimations();
+	std::string getState(const int& version) const;
 
 	unsigned int score;
 	unsigned char lives = 3;
@@ -36,6 +37,7 @@ public:
 	void onPillCollected();
 	void lostLive();
 	void initTimers();
+    int getGameTime() const;
 	static void loadTextures(); 
 	std::string getState(const int& version) const;
 
@@ -47,6 +49,7 @@ public:
 	pos drawLocation;
 private:
 	Text score;
+    int gameTime;
 	unsigned char cherries = 2;
 	static Texture cherry;
 	static Texture live;
