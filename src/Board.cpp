@@ -91,15 +91,15 @@ std::string Board::getState(const int& version) const
 {
 	std::ostringstream stringStream;
 	stringStream << "{ ";
-	stringStream << "\"version\": " << version << ", ";
+	stringStream << "\"Version\": " << version << ", ";
 
-	stringStream << "\"player\": " << player.getState(version).c_str() << ", ";
+	stringStream << "\"Player\": " << player.getState(version).c_str() << ", ";
 	stringStream << "\"" << blinky.Name << "\": " << blinky.getState(version).c_str() << ", ";
     stringStream << "\"" << pinky.Name  << "\": " << pinky.getState(version).c_str()  << ", ";
     stringStream << "\"" << inky.Name   << "\": " << inky.getState(version).c_str()   << ", ";
     stringStream << "\"" << clyde.Name  << "\": " << clyde.getState(version).c_str()  << ", ";
-    stringStream << "\"board\": { \"scatter_timer\": " << Ghost::scatterTimer << " }, ";
-	stringStream << "\"map\": " << map.getState(version).c_str();
+    stringStream << "\"Board\": { \"scatter_timer\": " << Ghost::scatterTimer << " }, ";
+	stringStream << "\"Map\": " << map.getState(version).c_str();
 	stringStream << " }";
 	return stringStream.str();
 }
