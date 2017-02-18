@@ -1,3 +1,4 @@
+#include <sstream>
 #include "Ghost.h"
 #include "Constants.h"
 #include "Controls.h"
@@ -182,6 +183,28 @@ void Ghost::exitDirection(const Map& map)
 Mode Ghost::getMode() const
 {
     return mode;
+}
+
+std::string Ghost::getState(const int& version) const
+{
+    const char* ModeNames[ModeCount];
+    ModeNames[Scatter]    = "Scatter";
+    ModeNames[Chase]      = "Chase";
+    ModeNames[Frightened] = "Frightened";
+    ModeNames[Eaten]      = "Eaten";
+
+    std::ostringstream stringStream;
+    stringStream << "{ ";
+    stringStream << "\"position\": [" << posX << ", " << posY << "], ";
+    stringStream << "\"target\": [" << target.first << ", " << target.second << "], ";
+    stringStream << "\"last_turn_tile\": [" << lastTurnTile.first << ", " << lastTurnTile.second << "], ";
+    stringStream << "\"mode\": \"" << ModeNames[mode] << "\", ";
+    stringStream << "\"caged\": " << (caged ? "true" : "false") << ", ";
+    stringStream << "\"caged_timer\": " << cagedTimer << ", ";
+    stringStream << "\"frightened_timer\": " << frightenedTimer << ", ";
+    stringStream << "\"direction\": \"" << AIDirections[getDirection()] << "\"";
+    stringStream << " }";
+    return stringStream.str();
 }
 
 void Ghost::direction(const Map & map, const int & movement, bool (*isWalkable)(const char&))

@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 
 	Fps fps(FPS);
 
-  //  useAIControls(); // TODO: Export to a menu
+    useAIControls(); // TODO: Export to a menu
 	board.initTimers();
 	while (isRunning)
 	{

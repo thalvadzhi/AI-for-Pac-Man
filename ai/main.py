@@ -205,7 +205,7 @@ def get_current_board(control):
     clyde_mode = state['Clyde']['mode']
 
     ghosts = [inky_position, blinky_position, pinky_position, clyde_position]
-    pacman = weird_mitak_pos_to_tile_pos(state['player_pos'])
+    pacman = weird_mitak_pos_to_tile_pos(state['player']['position'])
 
     width = state['map']['width']
     height = state['map']['height']

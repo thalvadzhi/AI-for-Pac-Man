@@ -21,6 +21,7 @@ public:
 	void putOnTrack(const Map&);
 	void frighten();
     Mode getMode() const;
+    std::string getState(const int& version) const;
 
 	pos lastTurnTile;
 	static int scatterTimer;

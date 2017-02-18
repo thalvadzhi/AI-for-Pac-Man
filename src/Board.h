@@ -14,6 +14,7 @@ public:
 	void turn(const unsigned char&);
 	void reset(const Map&);
 	static void loadAnimations();
+	std::string getState(const int& version) const;
 
 	unsigned int score;
 	unsigned char lives = 3;

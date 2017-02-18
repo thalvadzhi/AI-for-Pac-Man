@@ -48,6 +48,15 @@ const char Pill = 'H';
 const char InnerWall = 'w';
 const char OuterWall = 'W';
 
+enum AIControls : char {
+    aiUp    = 'U',
+    aiDown  = 'D',
+    aiLeft  = 'L',
+    aiRight = 'R',
+};
+
+const char AIDirections[] = { aiUp, aiDown, aiLeft, aiRight };
+
 const unsigned int DotPoints  = 10;
 const unsigned int PillPoints = 50;
 const unsigned int GhostPoints = 200;

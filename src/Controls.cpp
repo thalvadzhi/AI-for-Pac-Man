@@ -15,13 +15,6 @@ static int aiSocketFD = -1;
 
 static const char* aiSocketAddress = "./pacman_ai_socket";
 
-enum AIControls : char {
-		aiUp    = 'U',
-		aiDown  = 'D',
-		aiLeft  = 'L',
-		aiRight = 'R',
-};
-
 void handleInput()
 {
 	SDL_Event curEvent;

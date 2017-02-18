@@ -42,6 +42,8 @@ void Board::draw(SDL_Renderer* renderer)
 
 void Board::onPillCollected()
 {
+    if (inky.getMode() != Frightened && pinky.getMode() != Frightened && blinky.getMode() != Frightened && clyde.getMode() != Frightened)
+        player.streak = 1;
 	inky.frighten();
 	blinky.frighten();
 	clyde.frighten();
@@ -87,21 +89,16 @@ void Board::drawScore(SDL_Renderer* renderer)
 
 std::string Board::getState(const int& version) const
 {
-    const char* ModeNames[ModeCount] = {
-        "Scatter",
-        "Chase",
-        "Frightened",
-        "Eaten"
-    };
-
 	std::ostringstream stringStream;
 	stringStream << "{ ";
 	stringStream << "\"version\": " << version << ", ";
-	stringStream << "\"player_pos\": [" << player.posX << ", " << player.posY << "], ";
-	stringStream << "\"" << blinky.Name << "\": { \"position\": [" << blinky.posX << ", " << blinky.posY << "], \"mode\": \"" << ModeNames[blinky.getMode()] << "\" }, ";
-	stringStream << "\"" << inky.Name   << "\": { \"position\": [" << inky.posX   << ", " << inky.posY   << "], \"mode\": \"" << ModeNames[inky.getMode()]   << "\" }, ";
-	stringStream << "\"" << pinky.Name  << "\": { \"position\": [" << pinky.posX  << ", " << pinky.posY  << "], \"mode\": \"" << ModeNames[pinky.getMode()]  << "\" }, ";
-	stringStream << "\"" << clyde.Name  << "\": { \"position\": [" << clyde.posX  << ", " << clyde.posY  << "], \"mode\": \"" << ModeNames[clyde.getMode()]  << "\" }, ";
+
+	stringStream << "\"player\": " << player.getState(version).c_str() << ", ";
+	stringStream << "\"" << blinky.Name << "\": " << blinky.getState(version).c_str() << ", ";
+    stringStream << "\"" << pinky.Name  << "\": " << pinky.getState(version).c_str()  << ", ";
+    stringStream << "\"" << inky.Name   << "\": " << inky.getState(version).c_str()   << ", ";
+    stringStream << "\"" << clyde.Name  << "\": " << clyde.getState(version).c_str()  << ", ";
+    stringStream << "\"board\": { \"scatter_timer\": " << Ghost::scatterTimer << " }, ";
 	stringStream << "\"map\": " << map.getState(version).c_str();
 	stringStream << " }";
 	return stringStream.str();
@@ -132,6 +129,20 @@ void Board::drawIngameInfo(SDL_Renderer * renderer)
 		live.draw(renderer, tile);
 	}
 	drawScore(renderer);
+}
+
+std::string Player::getState(const int& version) const
+{
+    std::ostringstream stringStream;
+    stringStream << "{ ";
+    stringStream << "\"position\": [" << posX << ", " << posY << "], ";
+    stringStream << "\"score\": " << score << ", ";
+    stringStream << "\"lives\": " << int(lives) << ", ";
+    stringStream << "\"streak\": " << int(streak) << ", ";
+    stringStream << "\"turn\": \"" << AIDirections[getTurnDirection()] << "\", ";
+    stringStream << "\"direction\": \"" << AIDirections[getDirection()] << "\"";
+    stringStream << " }";
+    return stringStream.str();
 }
 
 Player::Player(const int& posX, const int& posY) : MobileObject(posX, posY)
