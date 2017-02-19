@@ -191,6 +191,8 @@ void Player::move(Map& map)
 
 	for (int step = movement >= TileSize ? TileSize - 1 : movement; movement > 0;
 			movement -= step, step = movement >= TileSize ? TileSize - 1 : movement) {
+				tryTurn(map);
+				
 		switch (getDirection()) {
 		case Up:
 			posY -= step;
@@ -222,7 +224,6 @@ void Player::move(Map& map)
 			break;
 		}
 
-		tryTurn(map);
 	}
 	putOnTrack(map);
 }

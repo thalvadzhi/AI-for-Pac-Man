@@ -158,6 +158,7 @@ struct Player : MobileObject {
 
         for (int step = movement >= TileSize ? TileSize - 1 : movement; movement > 0;
              movement -= step, step = movement >= TileSize ? TileSize - 1 : movement) {
+               tryTurn(data);
             switch (direction) {
                 case Up:
                     posY -= step;
@@ -187,7 +188,6 @@ struct Player : MobileObject {
                     onPillCollected(data);
                     break;
             }
-            tryTurn(data);
         }
         putOnTrack(data);
     }
@@ -905,7 +905,7 @@ void Player::tryTurn(const Data& data)
     }
 }
 
-#define DEBUG
+// #define DEBUG
 
 static PyObject *PacmanError;
 
